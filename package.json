@@ -1,0 +1,11 @@
+{
+  "name": "coder-meets-bagel",
+  "version": "1.0.0",
+  "description": "Automate the painfully slow process of giving and receiving bagels",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shehzad Daredia",
+  "license": "ISC"
+}
