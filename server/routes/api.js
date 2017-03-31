@@ -6,7 +6,7 @@ var utils = require('../controllers');
 
 router.get('/redeem', function(req, res) {
   bagelDeeplink = utils.getBagelDeeplink(req.query.url);
-  res.status(200).json(bagelDeeplink);
+  utils.getBagelData(bagelDeeplink, res);
 });
 
 module.exports = router;
