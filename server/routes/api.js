@@ -1,11 +1,12 @@
-var router = require('express').Router();
-// var utils = require('../controllers');
+const router = require('express').Router();
+var utils = require('../controllers');
 // var middleware = require('../middleware');
 
 // router.use(middleware.allowCrossDomain);
 
 router.get('/redeem', function(req, res) {
-  res.status(200).json(req.query);
+  bagelDeeplink = utils.getBagelDeeplink(req.query.url);
+  res.status(200).json(bagelDeeplink);
 });
 
 module.exports = router;
