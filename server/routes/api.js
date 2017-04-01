@@ -10,17 +10,24 @@ router.get('/redeem', function(req, res) {
   utils.getBagelData(bagelDeeplink, res);
 });
 
-router.post('/bagels', function(req, res) {
-  utils.createBagel(req.body, res);
+/* TEST ROUTES FOR UNIT TESTING KEY FUNCTIONALITY */
+router.get('/get_bagel_data_test', function(req, res) {
+  bagelDeeplink = utils.getBagelDeeplink(req.query.url);
+  utils.getBagelData(bagelDeeplink, res, {test: true});
 });
 
-router.get('/bagels', function(req, res) {
-  utils.getBagelId(req.query.profile, res);
+router.post('/create_bagel_test', function(req, res) {
+  utils.createBagel(req.body, res, {test: true});
+});
+
+router.get('/get_bagel_id_test', function(req, res) {
+  utils.getBagelId(req.query.profile, res, {test: true});
 });
 
 // TODO: change to post
-router.get('/like', function(req, res) {
+router.get('/like_bagel_test', function(req, res) {
   utils.likeBagel(req.query.profile, req.query.long_id, res);
 });
+/* END TEST ROUTES */
 
 module.exports = router;
