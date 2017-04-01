@@ -75,6 +75,84 @@ module.exports = {
       matchingBagelId = matchingBagel[0].id;
       response.status(200).json({matchingBagelId: matchingBagelId});
     })
-    .catch(err => response.status(400).json({err: err, endpoint: endpoint, requestHeaders: headers}));
+    .catch(err => response.status(400).json({err: err, endpoint: endpoint, reqHeaders: headers}));
+  },
+
+  likeBagel: (profileId, longId, response) => {
+    const endpoint = 'https://api.coffeemeetsbagel.com/batch';
+
+    const headers = {
+      'Host': 'api.coffeemeetsbagel.com',
+      'Accept': 'application/json; version=3.0',
+      'AppStore-Version': '3.25.0',
+      'App-Version': '698',
+      'Facebook-Auth-Token': 'EAAD4bKUPbR8BAIZCfeDgW06YP310jOxdfU0WDeFBMJAfs7Ds6eISTvyxtAElAeoTMxRyZAAMkj4Jew7ArEOG5bLbjTMilyUmqm4y3tbJbQiOFGZCeevkqZCLlRJozA5HEIXruS8qsbJuS5w1BL3ZBdtkZB34VsIuvnSnn2XHAy0TzlXokaoZBi8FThdDGj7ge3J3HsZCZAFZAF51TMkjJsppdsk5wo6POz8RIZD',
+      'Accept-Language': 'en-US;q=1',
+      'Accept-Encoding': 'gzip, deflate',
+      'Cookie': 'csrftoken=SqHigc2vn9JEgjekXea5huTXx1IzLJ9B; sessionid=8tykekyoukx01auxyymcy0y5ydqfgrju',
+      'User-Agent': 'Coffee Meets Bagel/3.25.0 (iPhone; iOS 9.3.3; Scale/2.00)',
+      'Facebook-Auth-Token-Expires': '2017-05-29 21:09:32',
+      'Client': 'iOS',
+      'Profile-Id': myProfileId,
+    };
+
+    const body = [
+      {
+        'relative_url': 'bagel\/' + longId,
+        'method': 'PUT',
+        'body': {
+          'pair_chat_removed': 0,
+          'meetup_prompt_answer': 0,
+          'action': 1,
+          'is_rematched': 0,
+          'rising_bagel_count': 0,
+          'total_woos': 0,
+          'pair_total_woos': 0,
+          'is_bonus_bagel': 0,
+          'meetup_follow_up_answer': 0,
+          'id': longId,
+          'feedback': null,
+          'reveal_purchased': 0,
+          // 'end_date': '2017-04-01 19:00:00',
+          'show_order': 1,
+          'sync_status': 2,
+          'profile_id': profileId,
+          'internal_show_in_history': 1,
+          'city': null,
+          // 'start_date': '2017-03-31 19:00:00',
+          'mutual_friends': null,
+          'sectionIdentifier': '2017003',
+          'pair_bagel_type': -1,
+          'connected_through': [],
+          // 'given_by_first_name': 'Peter',
+          'pair_action': 0,
+          'bagel_type': 4,
+          'block': 0,
+          'couple_id': null,
+          'total_woos_seen': 0,
+          'pair_block': 0,
+          'response_award': 5,
+          'chat_removed': 0,
+          'next_bonusbagel_price': -999,
+          // 'created_at': '2017-04-01 00:06:13',
+          'block_reason': '',
+          'overlay': {},
+          'num_mutual_friends': 0,
+          'decoupling_date': null,
+          'free_bagel_prompt': null,
+          'block_type': null,
+          // 'last_updated': '2017-04-01 00:06:17'
+        }
+      }
+    ];
+
+    fetch(endpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body),
+    })
+    .then(res => res.json())
+    .then(data => response.status(200).json(data))
+    .catch(err => response.status(400).json({err: err, endpoint: endpoint, reqHeaders: headers, reqBody: body}));
   },
 };
