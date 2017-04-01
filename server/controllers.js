@@ -1,6 +1,20 @@
 const fetch = require('node-fetch');
 
 const myProfileId = '35411';
+const apiHeaders = {
+  'Host': 'api.coffeemeetsbagel.com',
+  'Accept': 'application/json; version=3.0',
+  'AppStore-Version': '3.25.0',
+  'App-Version': '698',
+  'Facebook-Auth-Token': 'EAAD4bKUPbR8BAIZCfeDgW06YP310jOxdfU0WDeFBMJAfs7Ds6eISTvyxtAElAeoTMxRyZAAMkj4Jew7ArEOG5bLbjTMilyUmqm4y3tbJbQiOFGZCeevkqZCLlRJozA5HEIXruS8qsbJuS5w1BL3ZBdtkZB34VsIuvnSnn2XHAy0TzlXokaoZBi8FThdDGj7ge3J3HsZCZAFZAF51TMkjJsppdsk5wo6POz8RIZD',
+  'Accept-Language': 'en-US;q=1',
+  'Accept-Encoding': 'gzip, deflate',
+  'Cookie': 'csrftoken=SqHigc2vn9JEgjekXea5huTXx1IzLJ9B; sessionid=8tykekyoukx01auxyymcy0y5ydqfgrju',
+  'User-Agent': 'Coffee Meets Bagel/3.25.0 (iPhone; iOS 9.3.3; Scale/2.00)',
+  'Facebook-Auth-Token-Expires': '2017-05-29 21:09:32',
+  'Client': 'iOS',
+  'Profile-Id': myProfileId,
+};
 
 parseHtmlResponse = (html) => {
   // html response contains a string that looks like this example:
@@ -46,33 +60,30 @@ module.exports = {
     .catch(err => response.status(400).json({err: err, endpoint: endpoint, requestHeaders: headers}));
   },
 
+  createBagel: (bagelData, response) => {
+    const endpoint = 'https://api.coffeemeetsbagel.com/redeem_bagel';
+
+    fetch(endpoint, {
+      method: 'POST',
+      headers: apiHeaders,
+      body: JSON.stringify(bagelData),
+    })
+    .then(res => res.json())
+    .then(data => response.status(201).json(data))
+    .catch(err => response.status(400).json({err: err, endpoint: endpoint, reqHeaders: headers, reqBody: body}));
+  },
+
   getBagelId: (profileId, response) => {
     const endpoint = 'https://api.coffeemeetsbagel.com/bagels?embed=profile&prefetch=true';
-    
-    const headers = {
-      'Host': 'api.coffeemeetsbagel.com',
-      'Accept': 'application/json; version=3.0',
-      'AppStore-Version': '3.25.0',
-      'App-Version': '698',
-      'Facebook-Auth-Token': 'EAAD4bKUPbR8BAIZCfeDgW06YP310jOxdfU0WDeFBMJAfs7Ds6eISTvyxtAElAeoTMxRyZAAMkj4Jew7ArEOG5bLbjTMilyUmqm4y3tbJbQiOFGZCeevkqZCLlRJozA5HEIXruS8qsbJuS5w1BL3ZBdtkZB34VsIuvnSnn2XHAy0TzlXokaoZBi8FThdDGj7ge3J3HsZCZAFZAF51TMkjJsppdsk5wo6POz8RIZD',
-      'Accept-Language': 'en-US;q=1',
-      'Accept-Encoding': 'gzip, deflate',
-      'Cookie': 'csrftoken=SqHigc2vn9JEgjekXea5huTXx1IzLJ9B; sessionid=8tykekyoukx01auxyymcy0y5ydqfgrju',
-      'User-Agent': 'Coffee Meets Bagel/3.25.0 (iPhone; iOS 9.3.3; Scale/2.00)',
-      'Facebook-Auth-Token-Expires': '2017-05-29 21:09:32',
-      'Connection': 'keep-alive',
-      'Client': 'iOS',
-      'Profile-Id': myProfileId,
-    };
 
     fetch(endpoint, {
       method: 'GET',
-      headers: headers
+      headers: apiHeaders
     })
     .then(res => res.json())
     .then(data => {
-      const matchingBagel = data.results.filter((bagel) => bagel.profile_id === profileId);
-      matchingBagelId = matchingBagel[0].id;
+      const matchingBagels = data.results.filter((bagel) => bagel.profile_id === profileId);
+      matchingBagelId = matchingBagels.length ? matchingBagels[0].id : null;
       response.status(200).json({matchingBagelId: matchingBagelId});
     })
     .catch(err => response.status(400).json({err: err, endpoint: endpoint, reqHeaders: headers}));
@@ -80,21 +91,6 @@ module.exports = {
 
   likeBagel: (profileId, longId, response) => {
     const endpoint = 'https://api.coffeemeetsbagel.com/batch';
-
-    const headers = {
-      'Host': 'api.coffeemeetsbagel.com',
-      'Accept': 'application/json; version=3.0',
-      'AppStore-Version': '3.25.0',
-      'App-Version': '698',
-      'Facebook-Auth-Token': 'EAAD4bKUPbR8BAIZCfeDgW06YP310jOxdfU0WDeFBMJAfs7Ds6eISTvyxtAElAeoTMxRyZAAMkj4Jew7ArEOG5bLbjTMilyUmqm4y3tbJbQiOFGZCeevkqZCLlRJozA5HEIXruS8qsbJuS5w1BL3ZBdtkZB34VsIuvnSnn2XHAy0TzlXokaoZBi8FThdDGj7ge3J3HsZCZAFZAF51TMkjJsppdsk5wo6POz8RIZD',
-      'Accept-Language': 'en-US;q=1',
-      'Accept-Encoding': 'gzip, deflate',
-      'Cookie': 'csrftoken=SqHigc2vn9JEgjekXea5huTXx1IzLJ9B; sessionid=8tykekyoukx01auxyymcy0y5ydqfgrju',
-      'User-Agent': 'Coffee Meets Bagel/3.25.0 (iPhone; iOS 9.3.3; Scale/2.00)',
-      'Facebook-Auth-Token-Expires': '2017-05-29 21:09:32',
-      'Client': 'iOS',
-      'Profile-Id': myProfileId,
-    };
 
     const body = [
       {
@@ -148,7 +144,7 @@ module.exports = {
 
     fetch(endpoint, {
       method: 'POST',
-      headers: headers,
+      headers: apiHeaders,
       body: JSON.stringify(body),
     })
     .then(res => res.json())

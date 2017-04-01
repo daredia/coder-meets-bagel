@@ -4,9 +4,14 @@ const utils = require('../controllers');
 
 // router.use(middleware.allowCrossDomain);
 
+// TODO: change endpoint names to make more sense
 router.get('/redeem', function(req, res) {
   bagelDeeplink = utils.getBagelDeeplink(req.query.url);
   utils.getBagelData(bagelDeeplink, res);
+});
+
+router.post('/bagels', function(req, res) {
+  utils.createBagel(req.body, res);
 });
 
 router.get('/bagels', function(req, res) {
