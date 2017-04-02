@@ -7,7 +7,11 @@ const utils = require('../controllers');
 // TODO: change endpoint names to make more sense
 router.get('/redeem', function(req, res) {
   bagelDeeplink = utils.getBagelDeeplink(req.query.url);
-  utils.getBagelData(bagelDeeplink, res);
+
+  const options = {};
+  // add a recipient url parameter if sharing a bagel with someone other than shehzad
+  options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
+  utils.getBagelData(bagelDeeplink, res, options);
 });
 
 /* TEST ROUTES FOR UNIT TESTING KEY FUNCTIONALITY */
@@ -17,7 +21,10 @@ router.get('/get_bagel_data_test', function(req, res) {
 });
 
 router.post('/create_bagel_test', function(req, res) {
-  utils.createBagel(req.body, res, {test: true});
+  const options = {test: true};
+  // add a recipient url parameter if sharing a bagel with someone other than shehzad
+  options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
+  utils.createBagel(req.body, res, options);
 });
 
 router.get('/get_bagel_id_test', function(req, res) {

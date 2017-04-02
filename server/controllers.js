@@ -1,19 +1,34 @@
 const fetch = require('node-fetch');
 
-const myProfileId = '35411';
 const apiHeaders = {
-  'Host': 'api.coffeemeetsbagel.com',
-  'Accept': 'application/json; version=3.0',
-  'AppStore-Version': '3.25.0',
-  'App-Version': '698',
-  'Facebook-Auth-Token': 'EAAD4bKUPbR8BAIZCfeDgW06YP310jOxdfU0WDeFBMJAfs7Ds6eISTvyxtAElAeoTMxRyZAAMkj4Jew7ArEOG5bLbjTMilyUmqm4y3tbJbQiOFGZCeevkqZCLlRJozA5HEIXruS8qsbJuS5w1BL3ZBdtkZB34VsIuvnSnn2XHAy0TzlXokaoZBi8FThdDGj7ge3J3HsZCZAFZAF51TMkjJsppdsk5wo6POz8RIZD',
-  'Accept-Language': 'en-US;q=1',
-  'Accept-Encoding': 'gzip, deflate',
-  'Cookie': 'csrftoken=SqHigc2vn9JEgjekXea5huTXx1IzLJ9B; sessionid=8tykekyoukx01auxyymcy0y5ydqfgrju',
-  'User-Agent': 'Coffee Meets Bagel/3.25.0 (iPhone; iOS 9.3.3; Scale/2.00)',
-  'Facebook-Auth-Token-Expires': '2017-05-29 21:09:32',
-  'Client': 'iOS',
-  'Profile-Id': myProfileId,
+  me: {
+    'Host': 'api.coffeemeetsbagel.com',
+    'Accept': 'application/json; version=3.0',
+    'AppStore-Version': '3.25.0',
+    'App-Version': '698',
+    'Facebook-Auth-Token': 'EAAD4bKUPbR8BAIZCfeDgW06YP310jOxdfU0WDeFBMJAfs7Ds6eISTvyxtAElAeoTMxRyZAAMkj4Jew7ArEOG5bLbjTMilyUmqm4y3tbJbQiOFGZCeevkqZCLlRJozA5HEIXruS8qsbJuS5w1BL3ZBdtkZB34VsIuvnSnn2XHAy0TzlXokaoZBi8FThdDGj7ge3J3HsZCZAFZAF51TMkjJsppdsk5wo6POz8RIZD',
+    'Accept-Language': 'en-US;q=1',
+    'Accept-Encoding': 'gzip, deflate',
+    'Cookie': 'csrftoken=SqHigc2vn9JEgjekXea5huTXx1IzLJ9B; sessionid=8tykekyoukx01auxyymcy0y5ydqfgrju',
+    'User-Agent': 'Coffee Meets Bagel/3.25.0 (iPhone; iOS 9.3.3; Scale/2.00)',
+    'Facebook-Auth-Token-Expires': '2017-05-29 21:09:32',
+    'Client': 'iOS',
+    'Profile-Id': '35411',
+  },
+  shehzam: {
+    'Cookie': 'sessionid=ijaz9ilpdhd7a60x56fhywmolg1ookug',
+    'Device-Name': 'Sony D5803',
+    'AppStore-Version': '3.18.0.1306',
+    'Facebook-Auth-Token': 'EAAD4bKUPbR8BADsxyFbmQqK2YLIecAbXxtPet8M1jixsszeWI11pZBpScNjQvMZAFRnu1kBqxZBqX8ABerz6dOAQYGPCq3FbwnzwpYbYBgDZCFcAd0pZBYk8p9BffoZBtXAeQOm23xvpawfVby7GZA48VaPNZAZCVmCg6zHkWCxVl6JMJCmr07gSw7knpfiBlrusNhjP7ruZCaPbJt1VZCSoeZAW',
+    'Charset': 'utf-8',
+    'Client': 'Android',
+    'Accept': 'application/json; version=3.0',
+    'App-Version': '1306',
+    'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; D5803 Build/23.4.A.1.236)',
+    'Host': 'api.coffeemeetsbagel.com',
+    'Accept-Encoding': 'gzip',
+    // 'Profile-Id': '3618566',
+  }
 };
 
 parseHtmlResponse = (html) => {
@@ -97,7 +112,7 @@ exports.likeBagel = (profileId, longId, response) => {
 
   fetch(endpoint, {
     method: 'POST',
-    headers: apiHeaders,
+    headers: apiHeaders.me,
     body: JSON.stringify(body),
   })
   .then(res => res.json())
@@ -118,7 +133,7 @@ exports.getBagelId = (profileId, response, options) => {
 
   fetch(endpoint, {
     method: 'GET',
-    headers: apiHeaders
+    headers: apiHeaders.me
   })
   .then(res => res.json())
   .then(data => {
@@ -141,10 +156,13 @@ exports.getBagelId = (profileId, response, options) => {
 exports.createBagel = (bagelData, response, options) => {
   console.log('inside createBagel');
   const endpoint = 'https://api.coffeemeetsbagel.com/redeem_bagel';
+  const headers = (options && options.recipient) ?
+      apiHeaders[options.recipient] :
+      apiHeaders.me;
 
   fetch(endpoint, {
     method: 'POST',
-    headers: apiHeaders,
+    headers: headers,
     body: JSON.stringify(bagelData),
   })
   .then(res => res.json())
@@ -183,7 +201,7 @@ exports.getBagelData = (endpoint, response, options) => {
     if (options && options.test) {
       return response.status(200).json(bagelData);
     }
-    exports.createBagel(bagelData, response);
+    exports.createBagel(bagelData, response, options);
   })
   .catch(err => {
     const errObj = {err: err, endpoint: endpoint, requestHeaders: headers};
