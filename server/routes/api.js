@@ -28,7 +28,10 @@ router.post('/create_bagel_test', function(req, res) {
 });
 
 router.get('/get_bagel_id_test', function(req, res) {
-  utils.getBagelId(req.query.profile, res, {test: true});
+  const options = {test: true};
+  // add a recipient url parameter if sharing a bagel with someone other than shehzad
+  options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
+  utils.getBagelId(req.query.profile, res, options);
 });
 
 // TODO: change to post

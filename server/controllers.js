@@ -130,10 +130,13 @@ exports.likeBagel = (profileId, longId, response) => {
 exports.getBagelId = (profileId, response, options) => {
   console.log('inside getBagelId');
   const endpoint = 'https://api.coffeemeetsbagel.com/bagels?embed=profile&prefetch=true';
+  const headers = (options && options.recipient) ?
+      apiHeaders[options.recipient] :
+      apiHeaders.me;
 
   fetch(endpoint, {
     method: 'GET',
-    headers: apiHeaders.me
+    headers: headers
   })
   .then(res => res.json())
   .then(data => {
@@ -171,7 +174,7 @@ exports.createBagel = (bagelData, response, options) => {
     if ((options && options.test) || !data.success) {
       return response.status(201).json(data);
     }
-    exports.getBagelId(bagelData.redeem_profile_id, response);
+    exports.getBagelId(bagelData.redeem_profile_id, response, options);
   })
   .catch(err => {
     const errObj = {err: err, endpoint: endpoint, reqHeaders: headers, reqBody: body};
