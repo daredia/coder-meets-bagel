@@ -11,6 +11,7 @@ router.get('/redeem', function(req, res) {
   const options = {};
   // add a recipient url parameter if sharing a bagel with someone other than shehzad
   options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
+  options.dislike = req.query && req.query.action === 'dislike';
   utils.getBagelData(bagelDeeplink, res, options);
 });
 
@@ -35,8 +36,12 @@ router.get('/get_bagel_id_test', function(req, res) {
 });
 
 // TODO: change to post
-router.get('/like_bagel_test', function(req, res) {
-  utils.likeBagel(req.query.profile, req.query.long_id, res);
+router.get('/swipe_bagel_test', function(req, res) {
+  const options = {};
+  // add a recipient url parameter if sharing a bagel with someone other than shehzad
+  options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
+  options.dislike = req.query && req.query.action === 'dislike';
+  utils.swipeBagel(req.query.profile, req.query.long_id, res, options);
 });
 /* END TEST ROUTES */
 

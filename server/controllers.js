@@ -56,9 +56,12 @@ exports.getBagelDeeplink = (receivedBagelLink) => {
   return bagelDeeplinkPrefix + bagelPath;
 };
 
-exports.likeBagel = (profileId, longId, response) => {
-  console.log('inside likeBagel');
+exports.swipeBagel = (profileId, longId, response, options) => {
+  console.log('inside swipeBagel');
   const endpoint = 'https://api.coffeemeetsbagel.com/batch';
+  const headers = (options && options.recipient) ?
+      apiHeaders[options.recipient] :
+      apiHeaders.me;
 
   const body = [
     {
@@ -67,7 +70,7 @@ exports.likeBagel = (profileId, longId, response) => {
       'body': {
         'pair_chat_removed': 0,
         'meetup_prompt_answer': 0,
-        'action': 1,
+        'action': (options && options.dislike) ? 2 : 1, // 1 is like, 2 is dislike
         'is_rematched': 0,
         'rising_bagel_count': 0,
         'total_woos': 0,
@@ -112,12 +115,12 @@ exports.likeBagel = (profileId, longId, response) => {
 
   fetch(endpoint, {
     method: 'POST',
-    headers: apiHeaders.me,
+    headers: headers,
     body: JSON.stringify(body),
   })
   .then(res => res.json())
   .then(data => {
-    console.log('data inside likeBagel', data);
+    console.log('data inside swipeBagel', data);
     response.status(200).json(data);
   })
   .catch(err => {
@@ -147,7 +150,7 @@ exports.getBagelId = (profileId, response, options) => {
     if ((options && options.test) || !matchingBagelId) {
       return response.status(200).json({matchingBagelId: matchingBagelId});
     }
-    exports.likeBagel(profileId, matchingBagelId, response);
+    exports.swipeBagel(profileId, matchingBagelId, response, options);
   })
   .catch(err => {
     const errObj = {err: err, endpoint: endpoint, reqHeaders: headers};
