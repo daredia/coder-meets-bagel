@@ -215,3 +215,58 @@ exports.getBagelData = (endpoint, response, options) => {
     response.status(400).json(errObj);
   });
 };
+
+exports.shareBagel = (profileId, response) => {
+  console.log('inside shareBagel');
+  const endpoint = 'https://api.branch.io/v1/url';
+  const headers = {
+    'Accept': 'application/json',
+    'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; D5803 Build/23.4.A.1.236)',
+    'Host': 'api.branch.io',
+    'Connection': 'Keep-Alive',
+    'Accept-Encoding': 'gzip'
+  };
+
+  const body = {
+    'identity_id': '197138173673876432',
+    'device_fingerprint_id': '197138172512119641',
+    'session_id': '377037759529666487',
+    'tags': ['redeem_bagel'],
+    'data': '{\"redeem_profile_id\":' + profileId + ',\"redeem_profile_guid\":\"' + profileId + '\",\"sent_by_profile_id\":3618566,\"sent_by_profile_guid\":\"3618566\",\"sender_first_name\":\"Shehzam\",\"validation_code\":\"e52ae299\",\"$deeplink_path\":\"\\\/redeem_bagel\\\/' + profileId + '\\\/e52ae299\\\/3618566\\\/\",\"$desktop_url\":\"https:\\\/\\\/coffeemeetsbagel.com\",\"page\":\"redeem_bagel\",\"$android_deepview\":\"cmb_private_2\",\"$desktop_deepview\":\"cmb_private_2\",\"$og_title\":\"Shehzam Sent You a Hot Bagel\",\"$og_description\":\"He is 21 years old, attended Jesse M. Bethel High School, works as a Gas Turbine System Technician \",\"$og_image_url\":\"https:\\\/\\\/d1ghufavkue0e7.cloudfront.net\\\/cache\\\/8d\\\/81\\\/8d811d292c5a1a1a013b2ea98d37825b.jpg\",\"~campaign\":\"redeem_bagel\",\"source\":\"android\"}',
+    'metadata': {},
+    'hardware_id': '90ce03134640b809',
+    'is_hardware_id_real': true,
+    'brand': 'Sony',
+    'model': 'D5803',
+    'screen_dpi': 320,
+    'screen_height': 1184,
+    'screen_width': 720,
+    'wifi': true,
+    'os': 'Android',
+    'os_version': 22,
+    'instrumentation': {
+      'v1\/url-qwt': '3',
+      'v1\/open-brtt': '1436',
+      'v1\/open-lrtt': '953'
+    },
+    'sdk': 'android1.14.5',
+    'retryNumber': 0,
+    'branch_key': 'key_live_abjg33tvXvD4utUJQ30cpgebndh2wkei'
+  };
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(body),
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log('data inside swipeBagel', data);
+    response.status(200).json(data);
+  })
+  .catch(err => {
+    const errObj = {err: err, endpoint: endpoint, reqHeaders: headers, reqBody: body};
+    console.log(JSON.stringify(errObj));
+    response.status(400).json(errObj);
+  });
+};

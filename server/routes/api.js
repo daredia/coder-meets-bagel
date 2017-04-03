@@ -43,6 +43,10 @@ router.get('/swipe_bagel_test', function(req, res) {
   options.dislike = req.query && req.query.action === 'dislike';
   utils.swipeBagel(req.query.profile, req.query.long_id, res, options);
 });
+
+router.get('/make_share_link_test', function(req, res) {
+  utils.shareBagel(req.query.profile, res);
+});
 /* END TEST ROUTES */
 
 module.exports = router;
