@@ -5,6 +5,16 @@ const utils = require('../controllers');
 // router.use(middleware.allowCrossDomain);
 
 // TODO: change endpoint names to make more sense
+router.post('/redeem', function(req, res) {
+  bagelDeeplink = utils.getBagelDeeplink(req.body.url);
+
+  const options = {};
+  // add an `android` POST variable if sharing a bagel for shehzam to dislike
+  options.recipient = (req.body.android) ? 'shehzam' : null;
+  options.dislike = !!options.recipient;
+  utils.getBagelData(bagelDeeplink, res, options);
+});
+
 router.get('/redeem', function(req, res) {
   bagelDeeplink = utils.getBagelDeeplink(req.query.url);
 
