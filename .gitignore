@@ -10,3 +10,6 @@ client/bundle.js
 # Misc
 charles-sessions/
 notes.txt
+*.apk
+*.jar
+Coffee Meets Bagel_com.coffeemeetsbagel/
