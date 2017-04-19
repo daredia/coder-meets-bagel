@@ -4,7 +4,7 @@
   "description": "Automate the painfully slow process of giving and receiving bagels",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "watchify -t [ babelify --presets [ es2015 react ] ] client/index.js -o client/bundle.js & node server/index.js",
     "start-dev": "watchify -t [ babelify --presets [ es2015 react ] ] client/index.js -o client/bundle.js & nodemon --ignore 'client/*' server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
