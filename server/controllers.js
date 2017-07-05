@@ -188,10 +188,11 @@ exports.createBagel = (bagelData, bagelProfileData, response, options) => {
 exports.getBagelProfileData = (bagelData, response, options) => {
   console.log('inside getBagelProfileData');
   const endpoint = 'https://api.coffeemeetsbagel.com/batch';
-  // unlike with other api requests, for this one, DONT use the recipient's headers - use the sender's
-  const headers = (options && options.recipient) ?
-      apiHeaders.me :
-      apiHeaders[options.recipient];
+  // Unlike with other api requests, for this one, DONT use the recipient's headers - always use 
+  // 'me' since i'm the one who got this bagel in my discover tab
+  // TODO: find an API call to access bagels in history, so i can get shehzam's history bagels
+  // and show their pics, even if he swiped on them on a different day than the day i shared them
+  const headers = apiHeaders.me;
   const body = [{
     'relative_url': 'givetakes?embed=profile',
     'method': 'GET'
