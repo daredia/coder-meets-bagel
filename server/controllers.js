@@ -145,7 +145,6 @@ exports.getBagelId = (profileId, bagelProfileData, response, options) => {
   .then(data => {
     const matchingBagels = data.results.filter((bagel) => bagel.profile_id === profileId);
     const matchingBagelId = matchingBagels.length ? matchingBagels[0].id : null;
-    console.log('matchingBagelId', matchingBagelId);
     
     if ((options && options.test) || !matchingBagelId) {
       return response.status(200).json({matchingBagelId, bagelProfileData});
