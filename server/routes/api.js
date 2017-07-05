@@ -31,18 +31,25 @@ router.get('/get_bagel_data_test', function(req, res) {
   utils.getBagelData(bagelDeeplink, res, {test: true});
 });
 
+router.get('/get_bagel_profile_data_test', function(req, res) {
+  const options = {test: true};
+  // add a recipient url parameter if sharing a bagel with someone other than shehzad
+  options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
+  utils.getBagelProfileData(null, res, options);
+});
+
 router.post('/create_bagel_test', function(req, res) {
   const options = {test: true};
   // add a recipient url parameter if sharing a bagel with someone other than shehzad
   options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
-  utils.createBagel(req.body, res, options);
+  utils.createBagel(req.body, null, res, options);
 });
 
 router.get('/get_bagel_id_test', function(req, res) {
   const options = {test: true};
   // add a recipient url parameter if sharing a bagel with someone other than shehzad
   options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
-  utils.getBagelId(req.query.profile, res, options);
+  utils.getBagelId(req.query.profile, null, res, options);
 });
 
 // TODO: change to post
@@ -51,7 +58,7 @@ router.get('/swipe_bagel_test', function(req, res) {
   // add a recipient url parameter if sharing a bagel with someone other than shehzad
   options.recipient = (req.query && req.query.recipient) ? req.query.recipient : null;
   options.dislike = req.query && req.query.action === 'dislike';
-  utils.swipeBagel(req.query.profile, req.query.long_id, res, options);
+  utils.swipeBagel(req.query.profile, req.query.long_id, null, res, options);
 });
 
 router.get('/make_share_link_test', function(req, res) {

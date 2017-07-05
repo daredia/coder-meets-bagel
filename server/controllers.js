@@ -56,7 +56,7 @@ exports.getBagelDeeplink = (receivedBagelLink) => {
   return bagelDeeplinkPrefix + bagelPath;
 };
 
-exports.swipeBagel = (profileId, longId, response, options) => {
+exports.swipeBagel = (profileId, longId, bagelProfileData, response, options) => {
   console.log('inside swipeBagel');
   const endpoint = 'https://api.coffeemeetsbagel.com/batch';
   const headers = (options && options.recipient) ?
@@ -121,16 +121,16 @@ exports.swipeBagel = (profileId, longId, response, options) => {
   .then(res => res.json())
   .then(data => {
     console.log('data inside swipeBagel', data);
-    response.status(200).json(data);
+    response.status(200).json({data, bagelProfileData});
   })
   .catch(err => {
-    const errObj = {err: err, endpoint: endpoint, reqHeaders: headers, reqBody: body};
+    const errObj = {err, endpoint, headers, body, bagelProfileData};
     console.log(JSON.stringify(errObj));
     response.status(400).json(errObj);
   });
 };
 
-exports.getBagelId = (profileId, response, options) => {
+exports.getBagelId = (profileId, bagelProfileData, response, options) => {
   console.log('inside getBagelId');
   const endpoint = 'https://api.coffeemeetsbagel.com/bagels?embed=profile&prefetch=true';
   const headers = (options && options.recipient) ?
@@ -144,22 +144,22 @@ exports.getBagelId = (profileId, response, options) => {
   .then(res => res.json())
   .then(data => {
     const matchingBagels = data.results.filter((bagel) => bagel.profile_id === profileId);
-    matchingBagelId = matchingBagels.length ? matchingBagels[0].id : null;
+    const matchingBagelId = matchingBagels.length ? matchingBagels[0].id : null;
     console.log('matchingBagelId', matchingBagelId);
     
     if ((options && options.test) || !matchingBagelId) {
-      return response.status(200).json({matchingBagelId: matchingBagelId});
+      return response.status(200).json({matchingBagelId, bagelProfileData});
     }
-    exports.swipeBagel(profileId, matchingBagelId, response, options);
+    exports.swipeBagel(profileId, matchingBagelId, bagelProfileData, response, options);
   })
   .catch(err => {
-    const errObj = {err: err, endpoint: endpoint, reqHeaders: headers};
+    const errObj = {err, endpoint, headers, bagelProfileData};
     console.log(JSON.stringify(errObj));
     response.status(400).json(errObj);
   });
 };
 
-exports.createBagel = (bagelData, response, options) => {
+exports.createBagel = (bagelData, bagelProfileData, response, options) => {
   console.log('inside createBagel');
   const endpoint = 'https://api.coffeemeetsbagel.com/redeem_bagel';
   const headers = (options && options.recipient) ?
@@ -175,9 +175,45 @@ exports.createBagel = (bagelData, response, options) => {
   .then(data => {
     console.log('data inside createBagel', data);
     if ((options && options.test) || !data.success) {
-      return response.status(201).json(data);
+      return response.status(201).json({data, bagelProfileData});
     }
-    exports.getBagelId(bagelData.redeem_profile_id, response, options);
+    exports.getBagelId(bagelData.redeem_profile_id, bagelProfileData, response, options);
+  })
+  .catch(err => {
+    const errObj = {err, endpoint, headers, body, bagelProfileData};
+    console.log(JSON.stringify(errObj));
+    response.status(400).json(errObj);
+  });
+};
+
+exports.getBagelProfileData = (bagelData, response, options) => {
+  console.log('inside getBagelProfileData');
+  const endpoint = 'https://api.coffeemeetsbagel.com/batch';
+  // unlike with other api requests, for this one, DONT use the recipient's headers - use the sender's
+  const headers = (options && options.recipient) ?
+      apiHeaders.me :
+      apiHeaders[options.recipient];
+  const body = [{
+    'relative_url': 'givetakes?embed=profile',
+    'method': 'GET'
+  }];
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(body),
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log('data inside getBagelProfileData', data);
+    if ((options && options.test) || data[0].status_code !== 200) {
+      return response.status(200).json(data);
+    }
+
+    const matchingBagels = data[0].body.results.filter((bagel) => bagel.id === bagelData.redeem_profile_id);
+    const matchingBagel = matchingBagels[0] || null;
+
+    exports.createBagel(bagelData, matchingBagel, response, options);
   })
   .catch(err => {
     const errObj = {err: err, endpoint: endpoint, reqHeaders: headers, reqBody: body};
@@ -207,7 +243,7 @@ exports.getBagelData = (endpoint, response, options) => {
     if (options && options.test) {
       return response.status(200).json(bagelData);
     }
-    exports.createBagel(bagelData, response, options);
+    exports.getBagelProfileData(bagelData, response, options);
   })
   .catch(err => {
     const errObj = {err: err, endpoint: endpoint, requestHeaders: headers};
