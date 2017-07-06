@@ -4,7 +4,14 @@ import React from 'react';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {link: '', android: false, response: '', bagelPics: []};
+    this.state = {
+      link: '',
+      android: false,
+      response: '',
+      bagelPics: [],
+      success: false,
+      error: false
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -13,7 +20,13 @@ export default class App extends React.Component {
   handleChange(event) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    this.setState({[target.name]: value, response: '', bagelPics: []});
+    this.setState({
+      [target.name]: value,
+      response: '',
+      bagelPics: [],
+      success: false,
+      error: false
+    });
   }
 
   handleSubmit(event) {
@@ -27,8 +40,22 @@ export default class App extends React.Component {
         if (res.data.bagelProfileData) {
           nextState.bagelPics = res.data.bagelProfileData.profile.photos;
         }
+        if (res.data.data && res.data.data.success === false) {
+          nextState.error = true;
+        } else {
+          nextState.success = true;
+        }
         this.setState(nextState);
       });
+    }
+  }
+
+  getSuccessOrError() {
+    if (this.state.success) {
+      return 'success';
+    }
+    if (this.state.error) {
+      return 'error';
     }
   }
 
@@ -44,7 +71,7 @@ export default class App extends React.Component {
           <input type="submit" value="Submit" />
         </form>
         {this.state.bagelPics.map(pic => <img src={pic.thumbnail} />)}
-        <p>{this.state.response}</p>
+        <p className={this.getSuccessOrError()}>{this.state.response}</p>
       </div>
     );
   }
