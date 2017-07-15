@@ -5,8 +5,23 @@ const utils = require('../controllers');
 // router.use(middleware.allowCrossDomain);
 
 // TODO: change endpoint names to make more sense
+router.post('/redeem_from_email', function(req, res) {
+  const parsedEmailData = utils.parseEmailData(req.body);
+  if (!parsedEmailData.url) {
+    return res.status(400).json({error: 'error parsing url', body: req.body});
+  }
+
+  const bagelDeeplink = utils.getBagelDeeplink(parsedEmailData.url);
+
+  const options = {};
+  // add an `android` POST variable if sharing a bagel for shehzam to dislike
+  options.recipient = (parsedEmailData.android) ? 'shehzam' : null;
+  options.dislike = !!options.recipient;
+  utils.getBagelData(bagelDeeplink, res, options);
+});
+
 router.post('/redeem', function(req, res) {
-  bagelDeeplink = utils.getBagelDeeplink(req.body.url);
+  const bagelDeeplink = utils.getBagelDeeplink(req.body.url);
 
   const options = {};
   // add an `android` POST variable if sharing a bagel for shehzam to dislike
@@ -16,7 +31,7 @@ router.post('/redeem', function(req, res) {
 });
 
 router.get('/redeem', function(req, res) {
-  bagelDeeplink = utils.getBagelDeeplink(req.query.url);
+  const bagelDeeplink = utils.getBagelDeeplink(req.query.url);
 
   const options = {};
   // add a recipient url parameter if sharing a bagel with someone other than shehzad
@@ -27,7 +42,7 @@ router.get('/redeem', function(req, res) {
 
 /* TEST ROUTES FOR UNIT TESTING KEY FUNCTIONALITY */
 router.get('/get_bagel_data_test', function(req, res) {
-  bagelDeeplink = utils.getBagelDeeplink(req.query.url);
+  const bagelDeeplink = utils.getBagelDeeplink(req.query.url);
   utils.getBagelData(bagelDeeplink, res, {test: true});
 });
 

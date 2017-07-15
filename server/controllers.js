@@ -31,6 +31,18 @@ const apiHeaders = {
   }
 };
 
+exports.parseEmailData = (data) => {
+  // `data` is json posted from zapier upon receiving a bagel share email forwarded by me
+  const emailTextParts = data.emailText ? data.emailText.split('http') : null;
+  const url = emailTextParts.length > 1 ? 'http' + emailTextParts[1] : null;
+  const isAndroid = data.emailRecipient && data.emailRecipient.includes('android');
+
+  return {
+    url: url,
+    android: isAndroid,
+  };
+};
+
 parseHtmlResponse = (html) => {
   // html response contains a string that looks like this example:
   // `window.location = "cmb:///redeem_bagel/145032/14adc3ed/3618566/?link_click_id=<...>";`
