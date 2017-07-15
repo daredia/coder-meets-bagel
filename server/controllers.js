@@ -35,7 +35,7 @@ exports.parseEmailData = (data) => {
   // `data` is json posted from zapier upon receiving a bagel share email forwarded by me
   const emailTextParts = data.emailText ? data.emailText.split('http') : null;
   const url = emailTextParts.length > 1 ? 'http' + emailTextParts[1] : null;
-  const isAndroid = data.emailRecipient && data.emailRecipient.includes('android');
+  const isAndroid = data.emailRecipient && data.emailRecipient.toLowerCase().includes('android');
 
   return {
     url: url,
